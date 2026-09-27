@@ -1,0 +1,9 @@
+{
+  "appId": "com.varunms.dieagain",
+  "appName": "Die Again",
+  "webDir": "dist",
+  "bundledWebRuntime": false,
+  "server": {
+    "androidScheme": "https"
+  }
+}
