@@ -9,23 +9,23 @@ permissions:
   contents: write
 
 jobs:
-  build-apk:
+  build:
+    name: Build Android APK
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: Setup Node.js 20
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'npm'
 
-      - name: Install Dependencies
-        run: npm ci || npm install
+      - name: Install NPM Dependencies
+        run: npm install
 
-      - name: Build Web Assets
+      - name: Build Web Game
         run: npm run build
 
       - name: Sync Capacitor Android
@@ -36,46 +36,47 @@ jobs:
         with:
           distribution: 'zulu'
           java-version: '17'
-          cache: 'gradle'
 
-      - name: Make Gradle Wrapper Executable
-        run: chmod +x android/gradlew
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
 
-      - name: Build Android Debug APK
+      - name: Build Android APK with Gradle
         working-directory: android
-        run: ./gradlew assembleDebug --stacktrace
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleDebug
 
-      - name: Copy & Rename APK
+      - name: Prepare APK File
         run: |
           mkdir -p output
           cp android/app/build/outputs/apk/debug/app-debug.apk output/die-again.apk
 
-      - name: Upload APK as Artifact
+      - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: die-again-android-apk
+          name: die-again-apk
           path: output/die-again.apk
+          retention-days: 30
 
-      - name: Create GitHub Release with APK
+      - name: Publish GitHub Release with APK
         uses: softprops/action-gh-release@v2
-        if: startsWith(github.ref, 'refs/heads/main')
+        if: github.ref == 'refs/heads/main'
         with:
           tag_name: v1.0.0
-          name: "Die Again v1.0.0 APK Release 🎮"
+          name: "Die Again v1.0.0 (Android APK) 🎮"
           body: |
             ## 🎮 Die Again: Troll Game Ever 😈 (v1.0.0)
-            
-            ### ✨ Features Included:
-            - **256 Unique Troll Stages** across 8 worlds
-            - **10x Difficulty Multiplier** up to `10^255x` on Level 256
-            - **Sequential Level Locking** (beat current level to advance)
-            - **💡 Rewarded Ad Hint System** (watch 5s retro spoof ads for tactical solutions)
-            - **Custom Level Editor** & On-screen Touch Controls
-            
-            ### 📲 How to Install:
-            1. Download **`die-again.apk`** below on your Android device.
-            2. Tap to install (allow "Install from Unknown Sources" if prompted).
-            3. Enjoy dying again and again! 😈
+
+            ### 🌟 Features:
+            - **256 Unique Troll Levels** across 8 worlds
+            - **10x Difficulty Escalation** up to `10^255x`
+            - **Sequential Level Locking** (must beat previous level to advance)
+            - **💡 Rewarded Ad Hint System** (watch 5s spoof ads to unlock tactical hints)
+            - **Custom Level Editor** & Arcade Touch Controls
+
+            ---
+            ### 📲 Download APK:
+            Download **`die-again.apk`** below directly onto your Android device and tap to install!
           files: output/die-again.apk
           draft: false
           prerelease: false
