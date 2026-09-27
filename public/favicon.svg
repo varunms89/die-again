@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <rect width="100" height="100" rx="20" fill="#0f172a"/>
+  <!-- Devil horns -->
+  <polygon points="25,35 15,10 40,25" fill="#ef4444"/>
+  <polygon points="75,35 85,10 60,25" fill="#ef4444"/>
+  <!-- Player character -->
+  <rect x="25" y="30" width="50" height="50" rx="10" fill="#facc15"/>
+  <!-- Eyes -->
+  <circle cx="40" cy="48" r="7" fill="#ffffff"/>
+  <circle cx="60" cy="48" r="7" fill="#ffffff"/>
+  <circle cx="43" cy="48" r="3.5" fill="#0f172a"/>
+  <circle cx="63" cy="48" r="3.5" fill="#0f172a"/>
+  <!-- Smirk -->
+  <path d="M 40 64 Q 50 72 60 64" stroke="#0f172a" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+</svg>
