@@ -577,6 +577,11 @@ export class Hud {
     }
   }
 
+  public isLevelUnlocked(levelId: number): boolean {
+    if (levelId <= 1) return true;
+    return this.completedLevels.has(levelId - 1) || this.completedLevels.has(levelId);
+  }
+
   public openLevelSelectModal(totalLevelsCount: number = 256) {
     const modalBody = document.getElementById('hud-modal-body')!;
     const modalTitle = document.getElementById('hud-modal-title')!;
@@ -615,7 +620,7 @@ export class Hud {
       `;
 
       for (let i = startLevel; i <= endLevel; i++) {
-        const isUnlocked = i === 1 || this.completedLevels.has(i - 1) || this.completedLevels.has(i);
+        const isUnlocked = this.isLevelUnlocked(i);
         const isDone = this.completedLevels.has(i);
         const deaths = this.deathsPerLevel[i] || 0;
         const mult = getDifficultyMultiplier(i);
@@ -625,7 +630,7 @@ export class Hud {
           <button class="level-card ${isDone ? 'completed' : ''} ${!isUnlocked ? 'locked' : ''}" data-level="${i}">
             <div class="level-card-number">${i}</div>
             <div class="level-card-diff">${mult}</div>
-            <div class="level-card-status">${isDone ? '★ Cleared' : (isUnlocked ? 'Play' : '🔒')}</div>
+            <div class="level-card-status">${isDone ? '★ Cleared' : (isUnlocked ? 'Play' : '🔒 Locked')}</div>
             <div class="level-card-deaths">💀 ${deaths} ${hasHint ? '💡' : ''}</div>
           </button>
         `;
@@ -647,6 +652,15 @@ export class Hud {
       const handleJump = () => {
         const val = parseInt(jumpInput?.value, 10);
         if (val >= 1 && val <= totalLevelsCount) {
+          if (!this.isLevelUnlocked(val)) {
+            sounds.playDeath();
+            const toast = document.createElement('div');
+            toast.className = 'rage-toast';
+            toast.textContent = `🔒 LEVEL ${val} LOCKED! Complete Level ${val - 1} first!`;
+            this.container.appendChild(toast);
+            setTimeout(() => toast.remove(), 1200);
+            return;
+          }
           sounds.playClick();
           this.closeModal();
           this.callbacks.onSelectLevel(val);
@@ -660,6 +674,15 @@ export class Hud {
       modalBody.querySelectorAll('.level-card').forEach((btn) => {
         btn.addEventListener('click', () => {
           const lvl = Number(btn.getAttribute('data-level'));
+          if (!this.isLevelUnlocked(lvl)) {
+            sounds.playDeath();
+            const toast = document.createElement('div');
+            toast.className = 'rage-toast';
+            toast.textContent = `🔒 LEVEL ${lvl} LOCKED! Beat Level ${lvl - 1} to unlock!`;
+            this.container.appendChild(toast);
+            setTimeout(() => toast.remove(), 1200);
+            return;
+          }
           sounds.playClick();
           this.closeModal();
           this.callbacks.onSelectLevel(lvl);

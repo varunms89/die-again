@@ -176,6 +176,10 @@ export class Game {
 
   public loadLevel(index: number) {
     if (index < 0 || index >= LEVELS.length) index = 0;
+    const targetLevelId = LEVELS[index]?.id || 1;
+    if (index > 0 && !this.hud.isLevelUnlocked(targetLevelId)) {
+      index = Math.max(0, this.currentLevelIndex);
+    }
     this.currentLevelIndex = index;
     this.currentLevel = this.cloneLevel(LEVELS[index]);
     this.restartLevel(false);
