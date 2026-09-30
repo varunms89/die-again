@@ -318,7 +318,7 @@ const BASE_LEVELS: LevelData[] = [
     },
     blocks: [
       { id: 'b6_ground', type: 'solid', x: 0, y: 380, w: 800, h: 70, initialX: 0, initialY: 380 },
-      { id: 'b6_high_plat', type: 'solid', x: 50, y: 220, w: 120, h: 24, initialX: 50, initialY: 220 }
+      { id: 'b6_high_plat', type: 'solid', x: 140, y: 300, w: 120, h: 24, initialX: 140, initialY: 300 }
     ],
     spikes: [],
     triggers: [
@@ -331,7 +331,7 @@ const BASE_LEVELS: LevelData[] = [
     ],
     gravityDirection: 1,
     initialHint: "That was easy... wait a minute",
-    hint: "Touch the center door to trigger the troll; the real dimensional portal will spawn high on the upper-left ledge!"
+    hint: "Jump right onto the raised ledge, then touch the center door. Return to the ledge and jump left into the real portal!"
   },
 
   // LEVEL 7: Upside Down

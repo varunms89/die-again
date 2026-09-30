@@ -110,7 +110,7 @@ export class Hud {
 
   constructor(private parent: HTMLElement, private callbacks: HudCallbacks) {
     this.container = document.createElement('div');
-    this.container.className = 'game-hud';
+    this.container.className = 'game-hud hud-collapsed';
     this.loadStats();
     this.initHtml();
   }
@@ -198,8 +198,8 @@ export class Hud {
     this.container.innerHTML = `
       <div class="hud-top-bar">
         <div class="hud-left">
-          <button id="hud-btn-logo" class="hud-logo-btn" title="Die Again Welcome Menu">
-            <img src="/logo.png" alt="Die Again" class="hud-logo-mini" />
+          <button id="hud-btn-logo" class="hud-logo-btn" title="Don't Die Welcome Menu">
+            <img src="/logo.png" alt="Don't Die" class="hud-logo-mini" />
           </button>
           <button id="hud-btn-menu" class="hud-btn" title="Select from 256 Levels">
             <span class="icon">☰</span>
@@ -241,8 +241,15 @@ export class Hud {
             <span class="icon">🛠️</span>
             <span class="hud-btn-text">Editor</span>
           </button>
+          <button id="hud-btn-collapse" class="hud-btn hud-btn-icon" title="Hide game menu" aria-label="Hide game menu">
+            <span class="icon">⌃</span>
+          </button>
         </div>
       </div>
+
+      <button id="hud-btn-expand" class="hud-compact-toggle" title="Show game menu" aria-label="Show game menu" aria-expanded="false">
+        <span aria-hidden="true">☰</span>
+      </button>
 
       <div id="hud-modal" class="hud-modal-overlay" style="display: none;">
         <div class="hud-modal-content">
@@ -263,6 +270,9 @@ export class Hud {
     this.modalContainer = document.getElementById('hud-modal')!;
 
     // Bind event listeners
+    document.getElementById('hud-btn-expand')?.addEventListener('click', () => this.setMenuExpanded(true));
+    document.getElementById('hud-btn-collapse')?.addEventListener('click', () => this.setMenuExpanded(false));
+
     document.getElementById('hud-btn-logo')?.addEventListener('click', () => {
       sounds.playClick();
       this.showWelcomeModal(() => {});
@@ -291,6 +301,7 @@ export class Hud {
 
     document.getElementById('hud-btn-editor')?.addEventListener('click', () => {
       sounds.playClick();
+      this.setMenuExpanded(false);
       this.callbacks.onOpenEditor();
     });
 
@@ -462,15 +473,16 @@ export class Hud {
   public showWelcomeModal(onStart: () => void) {
     const modalBody = document.getElementById('hud-modal-body')!;
     const modalTitle = document.getElementById('hud-modal-title')!;
-    modalTitle.textContent = "Welcome to Die Again 😈";
+    modalTitle.textContent = "Welcome to Don't Die 😈";
 
     modalBody.innerHTML = `
       <div class="welcome-modal-content">
         <div class="welcome-logo-container">
-          <img src="/logo.png" alt="Die Again Logo" class="welcome-logo-img" />
+          <img src="/logo.png" alt="Don't Die Logo" class="welcome-logo-img" />
           <div class="logo-glow-ring"></div>
         </div>
-        <h1 class="welcome-title">DIE AGAIN : TROLL GAME</h1>
+        <h1 class="welcome-title">DON'T DIE : TROLL GAME</h1>
+        <p class="welcome-developer">DEVELOPED BY <strong>CORE GAMES</strong></p>
         
         <div class="welcome-tagline-badge">
           <span class="pulse-dot">⚡</span>
@@ -794,5 +806,11 @@ export class Hud {
       this.adTimerInterval = null;
     }
     this.modalContainer.style.display = 'none';
+    this.setMenuExpanded(false);
+  }
+
+  private setMenuExpanded(expanded: boolean) {
+    this.container.classList.toggle('hud-collapsed', !expanded);
+    document.getElementById('hud-btn-expand')?.setAttribute('aria-expanded', String(expanded));
   }
 }

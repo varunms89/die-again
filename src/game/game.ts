@@ -10,6 +10,8 @@ import { TouchController } from '../ui/touchControls';
 import { LevelEditor } from './editor';
 
 export class Game {
+  private static readonly SAVED_LEVEL_KEY = 'die_again_current_level';
+
   public canvas: HTMLCanvasElement;
   public ctx: CanvasRenderingContext2D;
   public camera: Camera;
@@ -31,12 +33,15 @@ export class Game {
   private jumpReleasedThisFrame: boolean = false;
 
   private lastTime: number = 0;
-  private levelIntroTimer: number = 2.5;
   private globalTime: number = 0;
   private blinkTimer: number = 2.2;
   private isBlinking: boolean = false;
+  private levelWinPending: boolean = false;
+  private levelWinTimeout: number | null = null;
 
   constructor(container: HTMLElement) {
+    this.enforceLandscapeOrientation();
+
     this.canvas = document.createElement('canvas');
     this.canvas.id = 'game-canvas';
     this.ctx = this.canvas.getContext('2d')!;
@@ -73,7 +78,7 @@ export class Game {
 
     this.setupWindowEvents();
     this.resizeCanvas();
-    this.loadLevel(0);
+    this.loadLevel(this.getSavedLevelIndex());
 
     // Start background music loop on first user interaction
     const startAudioOnInteraction = () => {
@@ -100,6 +105,19 @@ export class Game {
     return JSON.parse(JSON.stringify(lvl));
   }
 
+  private getSavedLevelIndex(): number {
+    try {
+      const savedLevelId = localStorage.getItem(Game.SAVED_LEVEL_KEY);
+      if (savedLevelId === null) return 0;
+
+      const levelIndex = LEVELS.findIndex((level) => level.id === Number(savedLevelId));
+      return levelIndex >= 0 ? levelIndex : 0;
+    } catch (error) {
+      console.error('Unable to restore the saved level.', error);
+      return 0;
+    }
+  }
+
   private createPlayerState(x: number, y: number): PlayerState {
     return {
       x,
@@ -119,6 +137,16 @@ export class Game {
       respawnTimer: 0,
       color: '#facc15' // Bright cute hero yellow
     };
+  }
+
+  private enforceLandscapeOrientation() {
+    try {
+      if (screen.orientation && typeof screen.orientation.lock === 'function') {
+        screen.orientation.lock('landscape').catch(() => {});
+      }
+    } catch {
+      // Some browsers and desktop environments do not support orientation locking.
+    }
   }
 
   private setupWindowEvents() {
@@ -164,9 +192,9 @@ export class Game {
   }
 
   public resizeCanvas() {
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    const w = window.innerWidth;
-    const h = window.innerHeight;
+    const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+    const w = Math.max(window.innerWidth, window.innerHeight);
+    const h = Math.min(window.innerWidth, window.innerHeight);
 
     this.canvas.width = Math.floor(w * dpr);
     this.canvas.height = Math.floor(h * dpr);
@@ -182,6 +210,11 @@ export class Game {
     }
     this.currentLevelIndex = index;
     this.currentLevel = this.cloneLevel(LEVELS[index]);
+    try {
+      localStorage.setItem(Game.SAVED_LEVEL_KEY, String(this.currentLevel.id));
+    } catch (error) {
+      console.error('Unable to save the current level.', error);
+    }
     this.restartLevel(false);
     this.hud.updateLevel(
       this.currentLevel.title,
@@ -192,6 +225,12 @@ export class Game {
   }
 
   public restartLevel(countDeath: boolean = false) {
+    if (this.levelWinTimeout !== null) {
+      window.clearTimeout(this.levelWinTimeout);
+      this.levelWinTimeout = null;
+    }
+    this.levelWinPending = false;
+
     if (countDeath) {
       this.hud.recordDeath(this.currentLevel.id);
     }
@@ -201,7 +240,6 @@ export class Game {
     this.particles.clear();
     this.particles.initAmbientStars(this.camera.baseWidth, this.camera.baseHeight);
     this.player = this.createPlayerState(this.currentLevel.playerStart.x, this.currentLevel.playerStart.y);
-    this.levelIntroTimer = 2.4;
   }
 
   public openEditor() {
@@ -229,22 +267,26 @@ export class Game {
     this.player.isDead = true;
     this.player.respawnTimer = 0.28; // Snappy instant respawn!
     sounds.playDeath();
-    this.camera.shake(18);
     this.particles.emitDeath(this.player.x + this.player.w / 2, this.player.y + this.player.h / 2, this.player.color);
     this.hud.recordDeath(this.currentLevel.id);
   }
 
   private handleLevelWin() {
+    if (this.levelWinPending) return;
+    this.levelWinPending = true;
+
     sounds.playLevelClear();
     this.hud.recordCompletion(this.currentLevel.id);
     this.particles.emitConfetti(this.camera.baseWidth, this.camera.baseHeight);
 
     if (this.currentLevelIndex >= LEVELS.length - 1) {
-      setTimeout(() => {
+      this.levelWinTimeout = window.setTimeout(() => {
+        this.levelWinTimeout = null;
         this.hud.showGrandEndingModal();
       }, 600);
     } else {
-      setTimeout(() => {
+      this.levelWinTimeout = window.setTimeout(() => {
+        this.levelWinTimeout = null;
         this.hud.showVictoryModal(
           this.currentLevel.id,
           this.currentLevelIndex < LEVELS.length - 1,
@@ -286,11 +328,11 @@ export class Game {
       }
     }
 
-    if (this.levelIntroTimer > 0) {
-      this.levelIntroTimer -= dt;
+    if (this.currentScreen === 'editor') {
+      return;
     }
 
-    if (this.currentScreen === 'editor') {
+    if (this.levelWinPending) {
       return;
     }
 
@@ -388,7 +430,7 @@ export class Game {
   }
 
   private render() {
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
     this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
     const theme = this.currentTheme;
@@ -462,11 +504,6 @@ export class Game {
     // 10. Dark Room Mode Spotlight
     if (this.currentLevel.darkRoom && !this.editor.active) {
       this.renderDarknessSpotlight();
-    }
-
-    // 11. On-Canvas Animated Level Intro Banner
-    if (this.levelIntroTimer > 0 && !this.editor.active) {
-      this.renderCanvasLevelBanner(theme);
     }
 
     // Restore Camera Transform
@@ -814,42 +851,4 @@ export class Game {
     this.ctx.restore();
   }
 
-  private renderCanvasLevelBanner(theme: LevelTheme) {
-    this.ctx.save();
-    // Ease-in animation curve
-    const progress = Math.min(1, (2.4 - this.levelIntroTimer) * 4);
-    const alpha = Math.min(1, this.levelIntroTimer * 1.5);
-    const bannerY = 55 + (1 - progress) * -60;
-
-    this.ctx.globalAlpha = Math.max(0, alpha);
-    this.ctx.translate(this.camera.baseWidth / 2, bannerY);
-
-    // Glowing Banner Pill
-    const pw = 340;
-    const ph = 52;
-    this.ctx.fillStyle = 'rgba(15, 23, 42, 0.85)';
-    this.ctx.strokeStyle = theme.doorPortalStart;
-    this.ctx.lineWidth = 2;
-    this.ctx.shadowColor = theme.doorPortalStart;
-    this.ctx.shadowBlur = 14;
-
-    this.ctx.beginPath();
-    this.ctx.roundRect(-pw / 2, -ph / 2, pw, ph, [26]);
-    this.ctx.fill();
-    this.ctx.stroke();
-
-    // Text: Level Title
-    this.ctx.shadowBlur = 0;
-    this.ctx.font = "bold 13px 'Press Start 2P', monospace";
-    this.ctx.fillStyle = '#fde047';
-    this.ctx.textAlign = 'center';
-    this.ctx.fillText(this.currentLevel.title.toUpperCase(), 0, -4);
-
-    // Subtitle
-    this.ctx.font = "600 12px 'Space Grotesk', sans-serif";
-    this.ctx.fillStyle = '#cbd5e1';
-    this.ctx.fillText(`"${this.currentLevel.subtitle}"`, 0, 16);
-
-    this.ctx.restore();
-  }
 }

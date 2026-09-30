@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title">
+  <title id="title">Don't Die game mark</title>
+  <defs>
+    <linearGradient id="edge" x1="12" y1="8" x2="116" y2="120" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#e879f9"/>
+      <stop offset=".52" stop-color="#a855f7"/>
+      <stop offset="1" stop-color="#facc15"/>
+    </linearGradient>
+    <linearGradient id="bone" x1="38" y1="42" x2="90" y2="100" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#fff7d6"/>
+      <stop offset="1" stop-color="#cbd5e1"/>
+    </linearGradient>
+  </defs>
+  <path fill="#0b0f19" stroke="url(#edge)" stroke-width="5" d="M64 5 114 22v45c0 25-18 43-50 57C32 110 14 92 14 67V22L64 5Z"/>
+  <path fill="#e879f9" d="m42 46-15-5-7-25 27 20Zm44 0 15-5 7-25-27 20Z"/>
+  <path fill="url(#bone)" d="M64 32c-21 0-34 15-34 35v11c0 8 5 14 12 16l4 13h36l4-13c7-2 12-8 12-16V67c0-20-13-35-34-35Z"/>
+  <path fill="#171426" d="m43 61 15 5-13 11-9-5Zm42 0-15 5 13 11 9-5Z"/>
+  <path fill="#f43f5e" d="m48 64 7 2-7 6-4-2Zm32 0-7 2 7 6 4-2Z"/>
+  <path fill="#171426" d="M52 86h24v6H52z"/>
+  <path fill="#fff7d6" d="M55 86h5v7h-5zm13 0h5v7h-5z"/>
+  <path fill="none" stroke="#facc15" stroke-linecap="round" stroke-width="4" d="m26 93-8 8m84-8 8 8"/>
+</svg>

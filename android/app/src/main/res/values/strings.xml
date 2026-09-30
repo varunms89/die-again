@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">Die Again</string>
-    <string name="title_activity_main">Die Again</string>
+    <string name="app_name">Don\'t Die</string>
+    <string name="title_activity_main">Don\'t Die</string>
     <string name="package_name">com.varunms.dieagain</string>
     <string name="custom_url_scheme">com.varunms.dieagain</string>
 </resources>

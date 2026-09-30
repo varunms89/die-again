@@ -11,16 +11,24 @@ export class Camera {
   private shakeDecay: number = 8;
   public shakeOffsetX: number = 0;
   public shakeOffsetY: number = 0;
+  public shakeEnabled: boolean = false;
 
-  constructor(public baseWidth: number = 800, public baseHeight: number = 450) {}
+  constructor(public baseWidth: number = 800, public baseHeight: number = 450) {
+    this.shakeEnabled = false;
+  }
 
   public shake(intensity: number) {
+    if (!this.shakeEnabled) return;
     this.shakeIntensity = Math.min(this.shakeIntensity + intensity, 25);
   }
 
   public update(dt: number) {
-    // Camera shake decay
-    if (this.shakeIntensity > 0) {
+    if (!this.shakeEnabled) {
+      this.shakeIntensity = 0;
+      this.shakeOffsetX = 0;
+      this.shakeOffsetY = 0;
+    } else if (this.shakeIntensity > 0) {
+      // Camera shake decay
       this.shakeIntensity = Math.max(0, this.shakeIntensity - this.shakeDecay * dt);
       this.shakeOffsetX = (Math.random() - 0.5) * 2 * this.shakeIntensity;
       this.shakeOffsetY = (Math.random() - 0.5) * 2 * this.shakeIntensity;

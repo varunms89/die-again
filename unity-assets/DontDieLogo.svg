@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 320" role="img" aria-labelledby="title desc">
+  <title id="title">Don't Die</title>
+  <desc id="desc">A neon skull-and-shield logo for the Don't Die troll platformer.</desc>
+  <defs>
+    <linearGradient id="frame" x1="40" y1="24" x2="785" y2="302" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#e879f9"/>
+      <stop offset=".52" stop-color="#a855f7"/>
+      <stop offset="1" stop-color="#facc15"/>
+    </linearGradient>
+    <linearGradient id="letters" x1="284" y1="75" x2="802" y2="254" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#f0abfc"/>
+      <stop offset=".48" stop-color="#c084fc"/>
+      <stop offset="1" stop-color="#fde047"/>
+    </linearGradient>
+    <linearGradient id="face" x1="95" y1="78" x2="224" y2="223" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#fff7d6"/>
+      <stop offset="1" stop-color="#cbd5e1"/>
+    </linearGradient>
+    </defs>
+  <path fill="#0b0d19" stroke="url(#frame)" stroke-width="8" d="M28 34h784l-26 214q-192 53-383 57-192-4-383-57L28 34Z"/>
+  <path fill="none" stroke="#fff" stroke-opacity=".12" stroke-width="2" d="M45 52h750l-21 183q-184 48-371 52-187-4-371-52L45 52Z"/>
+  <path fill="#e879f9" d="m124 87-29-12-11-42 50 36Zm93 0 29-12 11-42-50 36Z"/>
+  <path fill="url(#face)" d="M171 67c-41 0-67 29-67 68v22c0 16 10 27 23 30l8 27h72l8-27c13-3 23-14 23-30v-22c0-39-26-68-67-68Z"/>
+  <path fill="#171426" d="m130 124 29 9-24 21-17-10Zm82 0-29 9 24 21 17-10Z"/>
+  <path fill="#f43f5e" d="m140 129 14 4-14 12-8-6Zm62 0-14 4 14 12 8-6Z"/>
+  <path fill="#171426" d="M145 164h52v16h-52z"/>
+  <path fill="#fff7d6" d="M150 164h10v18h-10zm17 0h10v18h-10zm17 0h10v18h-10z"/>
+  <path fill="none" stroke="#facc15" stroke-linecap="round" stroke-width="6" d="m112 203-19 19m137-19 19 19"/>
+  <text x="292" y="148" fill="url(#letters)" stroke="#0b0d19" stroke-linejoin="round" stroke-width="7" paint-order="stroke" font-family="Impact, 'Arial Black', sans-serif" font-size="82" font-weight="900" letter-spacing="1">DON'T</text>
+  <text x="292" y="247" fill="url(#letters)" stroke="#0b0d19" stroke-linejoin="round" stroke-width="8" paint-order="stroke" font-family="Impact, 'Arial Black', sans-serif" font-size="112" font-weight="900" letter-spacing="3">DIE</text>
+  <path fill="none" stroke="url(#frame)" stroke-linecap="round" stroke-width="5" d="M495 275h38m205 0h38"/>
+  <text x="552" y="283" fill="#f8fafc" font-family="system-ui, sans-serif" font-size="20" font-weight="800" letter-spacing="5">TROLL GAME</text>
+  <path fill="#facc15" d="m531 270 8 9-8 9-8-9z"/>
+</svg>

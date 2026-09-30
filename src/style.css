@@ -73,6 +73,34 @@ canvas#game-canvas {
   position: relative;
 }
 
+.game-hud.hud-collapsed .hud-top-bar {
+  display: none;
+}
+
+.hud-compact-toggle {
+  position: fixed;
+  top: max(12px, env(safe-area-inset-top));
+  left: max(12px, env(safe-area-inset-left));
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(192, 132, 252, 0.6);
+  border-radius: 12px;
+  background: rgba(13, 17, 30, 0.72);
+  color: #f8fafc;
+  font-size: 19px;
+  box-shadow: 0 0 14px rgba(168, 85, 247, 0.28);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.game-hud:not(.hud-collapsed) .hud-compact-toggle {
+  display: none;
+}
+
 /* Moving Rainbow Laser Border */
 .hud-top-bar::after {
   content: '';
@@ -826,6 +854,18 @@ canvas#game-canvas {
   color: #facc15;
   letter-spacing: 0.5px;
   text-shadow: 0 0 12px rgba(250, 204, 21, 0.6);
+}
+
+.welcome-developer {
+  margin-top: -8px;
+  color: #94a3b8;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+
+.welcome-developer strong {
+  color: #e9d5ff;
 }
 
 .welcome-tagline-badge {
