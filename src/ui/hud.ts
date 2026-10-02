@@ -135,6 +135,14 @@ export class Hud {
     }
   }
 
+  public syncSoundButtonState() {
+    const muted = sounds.getMuted();
+    if (this.soundBtnEl) {
+      this.soundBtnEl.querySelector('.icon')!.textContent = muted ? '🔇' : '🔊';
+      this.soundBtnEl.title = muted ? 'Unmute Sound' : 'Mute Sound';
+    }
+  }
+
   public recordDeath(levelId: number) {
     this.deathsPerLevel[levelId] = (this.deathsPerLevel[levelId] || 0) + 1;
     this.totalDeaths++;
@@ -268,6 +276,7 @@ export class Hud {
     this.deathCountEl = document.getElementById('hud-death-count')!;
     this.soundBtnEl = document.getElementById('hud-btn-sound') as HTMLButtonElement;
     this.modalContainer = document.getElementById('hud-modal')!;
+    this.syncSoundButtonState();
 
     // Bind event listeners
     document.getElementById('hud-btn-expand')?.addEventListener('click', () => this.setMenuExpanded(true));
@@ -290,8 +299,11 @@ export class Hud {
 
     this.soundBtnEl.addEventListener('click', () => {
       const isMuted = sounds.toggleMute();
-      this.soundBtnEl.querySelector('.icon')!.textContent = isMuted ? '🔇' : '🔊';
+      this.syncSoundButtonState();
       this.callbacks.onToggleMute();
+      if (!isMuted) {
+        sounds.playClick();
+      }
     });
 
     document.getElementById('hud-btn-touch')?.addEventListener('click', () => {

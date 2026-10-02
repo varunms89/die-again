@@ -66,7 +66,7 @@ export class Game {
       onSelectLevel: (lvlId) => this.loadLevel(lvlId - 1),
       onOpenEditor: () => this.openEditor(),
       onToggleTouch: () => this.touch.toggleVisibility(),
-      onToggleMute: () => {}
+      onToggleMute: () => this.hud.syncSoundButtonState()
     });
 
     // Initialize Level Editor
@@ -168,6 +168,14 @@ export class Game {
       if (e.code === 'KeyR') {
         sounds.playClick();
         this.restartLevel();
+      }
+
+      if (e.code === 'KeyM') {
+        const isMuted = sounds.toggleMute();
+        this.hud.syncSoundButtonState();
+        if (!isMuted) {
+          sounds.playClick();
+        }
       }
     });
 
