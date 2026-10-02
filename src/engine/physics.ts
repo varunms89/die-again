@@ -129,7 +129,6 @@ export class PhysicsEngine {
     // X Movement
     player.x += player.vx * dt;
     for (const b of blocks) {
-      if (b.type === 'invisible' && !b.visible) continue;
       if (b.type === 'fake') continue; // Pass right through fake blocks!
 
       if (checkAABB(player, b)) {
@@ -149,7 +148,6 @@ export class PhysicsEngine {
     player.y += player.vy * dt;
 
     for (const b of blocks) {
-      if (b.type === 'invisible' && !b.visible) continue;
       if (b.type === 'fake') continue;
 
       if (checkAABB(player, b)) {

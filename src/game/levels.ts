@@ -468,7 +468,7 @@ const BASE_LEVELS: LevelData[] = [
     },
     blocks: [
       { id: 'b10_ground', type: 'solid', x: 0, y: 380, w: 800, h: 70, initialX: 0, initialY: 380 },
-      { id: 'b10_pillar', type: 'solid', x: 180, y: 260, w: 70, h: 120, initialX: 180, initialY: 260 }
+      { id: 'b10_pillar', type: 'solid', x: 180, y: 330, w: 70, h: 50, initialX: 180, initialY: 330 }
     ],
     spikes: [
       { id: 's10_1', direction: 'up', x: 320, y: 356, w: 24, h: 24, initialX: 320, initialY: 356 },
@@ -479,7 +479,7 @@ const BASE_LEVELS: LevelData[] = [
         id: 't10_rocket',
         condition: 'distance_to_door',
         action: 'rocket_door',
-        params: { distance: 90, newX: 200, newY: 216 }
+        params: { distance: 90, newX: 200, newY: 256 }
       }
     ],
     gravityDirection: 1,
@@ -591,26 +591,28 @@ const BASE_LEVELS: LevelData[] = [
       initialY: 200
     },
     blocks: [
-      { id: 'b13_start', type: 'solid', x: 0, y: 380, w: 160, h: 70, initialX: 0, initialY: 380 },
-      { id: 'b13_bounce', type: 'bouncy', x: 260, y: 370, w: 80, h: 20, initialX: 260, initialY: 370, color: '#ec4899' },
-      { id: 'b13_ceil', type: 'solid', x: 230, y: 0, w: 140, h: 50, initialX: 230, initialY: 0 },
-      { id: 'b13_dest', type: 'solid', x: 660, y: 244, w: 140, h: 200, initialX: 660, initialY: 244 }
+      { id: 'b13_start', type: 'solid', x: 0, y: 380, w: 190, h: 70, initialX: 0, initialY: 380 },
+      { id: 'b13_step', type: 'solid', x: 200, y: 330, w: 70, h: 25, initialX: 200, initialY: 330 },
+      { id: 'b13_bounce', type: 'bouncy', x: 330, y: 366, w: 90, h: 20, initialX: 330, initialY: 366, color: '#ec4899' },
+      { id: 'b13_ceil', type: 'solid', x: 290, y: 0, w: 170, h: 54, initialX: 290, initialY: 0 },
+      { id: 'b13_landing', type: 'solid', x: 550, y: 260, w: 120, h: 22, initialX: 550, initialY: 260 },
+      { id: 'b13_dest', type: 'solid', x: 640, y: 228, w: 160, h: 220, initialX: 640, initialY: 228 }
     ],
     spikes: [
-      { id: 's13_c1', direction: 'down', x: 270, y: 50, w: 24, h: 24, initialX: 270, initialY: 50 },
-      { id: 's13_c2', direction: 'down', x: 300, y: 50, w: 24, h: 24, initialX: 300, initialY: 50 }
+      { id: 's13_c1', direction: 'down', x: 315, y: 54, w: 24, h: 24, initialX: 315, initialY: 54 },
+      { id: 's13_c2', direction: 'down', x: 350, y: 54, w: 24, h: 24, initialX: 350, initialY: 54 }
     ],
     triggers: [
       {
         id: 't13_msg',
         condition: 'player_x_gt',
         action: 'troll_message',
-        params: { x: 220, text: "Steer to the right! ↗️", color: '#ec4899' }
+        params: { x: 210, text: "Pop off the pad and steer right! ↗️", color: '#ec4899' }
       }
     ],
     gravityDirection: 1,
-    initialHint: "Air-strafe right after bouncing!",
-    hint: "Ceiling spikes sit straight above the bouncy trampoline. The second you hit the trampoline, steer HARD RIGHT in mid-air toward the high ledge!"
+    initialHint: "Pop the bounce pad, then drift right onto the ledge.",
+    hint: "The bounce pad sits just beyond the first safe step. Hit it, then steer to the right and land on the mid-air ledge before going for the exit door."
   },
 
   // LEVEL 14: Dark Room Flashlight
@@ -771,7 +773,7 @@ function generateProceduralLevel(id: number): LevelData {
   const doorFleeSpeed = Math.min(520, Math.round(220 + (id - 15) * 1.4));
   const isIce = (archetype === 5 || (id % 9 === 0 && id !== 256));
   const isDark = (archetype === 9 || (id % 13 === 0 && id !== 256));
-  const isGravityInverted = (archetype === 4 || (id % 17 === 0 && id !== 256));
+  const isGravityInverted = archetype === 4;
 
   const width = 800;
   const height = 450;
@@ -984,12 +986,15 @@ function generateProceduralLevel(id: number): LevelData {
         { id: `b${id}_t1`, type: 'solid', x: 130, y: groundY, w: 100, h: 70, initialX: 130, initialY: groundY },
         { id: `b${id}_trampoline`, type: 'bouncy', x: 260, y: 370, w: 80, h: 20, initialX: 260, initialY: 370, color: '#ec4899' },
         { id: `b${id}_t_ceil`, type: 'solid', x: 230, y: 0, w: 140, h: 50, initialX: 230, initialY: 0 },
+        { id: `b${id}_t_landing`, type: 'solid', x: 480, y: 260, w: 120, h: 22, initialX: 480, initialY: 260 },
         { id: `b${id}_t_dest`, type: 'solid', x: 650, y: 240, w: 150, h: 210, initialX: 650, initialY: 240 }
       );
+      door.y = 196;
+      door.initialY = 196;
       spikes.push(
         { id: `s${id}_t_spk`, direction: 'down', x: 270, y: 50, w: 24, h: 24, initialX: 270, initialY: 50 }
       );
-      hintText = `Tactical Clue: The bouncy pad launches you straight up into ceiling spikes! Hold RIGHT the instant you bounce to curve your trajectory onto the high landing platform.`;
+      hintText = `Tactical Clue: Jump onto the trampoline and steer right to land on the mid-air platform at x:480. Jump again to reach the high exit ledge.`;
       break;
     }
     case 9: { // Dark Room Precision
