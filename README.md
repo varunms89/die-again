@@ -71,11 +71,11 @@ The development server is running locally:
 
 ---
 
-## 🚀 Development & Scripts
-
 ## 📱 Android APK
 
 The version 5 Android APK is available at [`app.apk`](./app.apk) in the repository root.
+
+## 🚀 Development & Scripts
 
 ```bash
 # Install dependencies
